@@ -1,4 +1,4 @@
-= VPDB Utility Commands
+= VPDB Development Utility Commands
 
 .Installation
 ----
