@@ -57,7 +57,7 @@ unzip -qq -o ${tmpFileName} -d "${binDir}"
 
 trap 'rm -f $tmpFileName' EXIT
 
-if command -v vpdb; then
+if command -v vpdb >/dev/null; then
   exit
 fi
 
