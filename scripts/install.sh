@@ -77,4 +77,4 @@ if [ -f "$HOME/.bashrc" ]; then
   fi
 fi
 
-vpdb
+$binDir/vpdb
