@@ -25,9 +25,15 @@ patchEnvRC() {
   currentPathValue=$(getPathVar "$1")
   if ! echo "$currentPathValue" | grep -q "\$HOME/.local/bin\|$HOME/.local/bin"; then
     echo "export PATH=\"\${PATH}:$HOME/.local/bin\"" >> "$1"
-    echo "To add the vpdb command to your current PATH execute:"
-    echo "  source $1"
+    return 1
   fi
+
+  return 0
+}
+
+printSourceHelp() {
+  echo "To add the vpdb command to your current PATH execute:"
+  echo "  source $1"
 }
 
 osName=$(uname | tr '[:upper:]' '[:lower:]')
@@ -55,10 +61,17 @@ if command -v vpdb; then
   exit
 fi
 
+printedSource=0
+
 if [ -f "$HOME/.zshrc" ]; then
-  patchEnvRC "$HOME/.zshrc"
+  if ! patchEnvRC "$HOME/.zshrc"; then
+    printedSource=1
+    printSourceHelp "$HOME/.zshrc"
+  fi
 fi
 
 if [ -f "$HOME/.bashrc" ]; then
-  patchEnvRC "$HOME/.bashrc"
+  if ! patchEnvRC "$HOME/.bashrc" && [ $printedSource = 0 ]; then
+    printSourceHelp "$HOME/.bashrc"
+  fi
 fi
