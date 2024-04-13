@@ -5,13 +5,14 @@ import (
 	"io"
 	"log"
 	"os"
+	"path"
 	"strings"
 
 	"gopkg.in/yaml.v3"
 
-	"ssh-compose/internal/compose"
-	"ssh-compose/internal/env"
-	"ssh-compose/internal/tunnel"
+	"vpdb-dev-tool/internal/tools/ssh_compose/compose"
+	"vpdb-dev-tool/internal/tools/ssh_compose/env"
+	"vpdb-dev-tool/internal/tools/ssh_compose/tunnel"
 )
 
 const (
@@ -23,7 +24,7 @@ const (
 func WriteOutConfigs(configs tunnel.BuiltConfigs, tunnelConfigFile string) {
 	writeOutComposeFile(&configs.Compose)
 	writeOutEnvFile(configs.Hosts)
-	writeOutGitIgnoreFile(tunnelConfigFile)
+	writeOutGitIgnoreFile(path.Base(tunnelConfigFile))
 }
 
 func writeOutComposeFile(config *compose.Config) {
@@ -70,14 +71,36 @@ func patchGitIgnoreFile(tunnelConfigFile string) {
 	file := requireFile(gitIgnoreFileName, os.O_RDWR|os.O_APPEND)
 	defer file.Close()
 
-	if _, err := file.Seek(0, io.SeekEnd); err != nil {
-		log.Fatalf("failed to fast-forward to end of file %s: %s\n", gitIgnoreFileName, err)
+	entries := make(map[string]bool, 32)
+	scanner := bufio.NewScanner(file)
+
+	for scanner.Scan() {
+		line := strings.TrimSpace(scanner.Text())
+
+		if len(line) == 0 || line[0] == '#' {
+			continue
+		}
+
+		entries[line] = true
+	}
+
+	if scanner.Err() != nil {
+		log.Fatalf("encountered error while scanning %s: %s", gitIgnoreFileName, scanner.Err())
 	}
 
 	buff := bufio.NewWriter(file)
 
-	requireWriteLn(buff, gitIgnoreFileName, outputComposeFileName)
-	requireWriteLn(buff, gitIgnoreFileName, tunnelConfigFile)
+	if !entries[outputComposeFileName] {
+		requireWriteLn(buff, gitIgnoreFileName, outputComposeFileName)
+	}
+
+	if !entries[tunnelConfigFile] {
+		requireWriteLn(buff, gitIgnoreFileName, tunnelConfigFile)
+	}
+
+	if err := buff.Flush(); err != nil {
+		log.Fatalf("failed to write buffer to file %s: %s", gitIgnoreFileName, err)
+	}
 }
 
 func createGitIgnoreFile(tunnelConfigFile string) {
@@ -114,6 +137,10 @@ func createGitIgnoreFile(tunnelConfigFile string) {
 
 	for _, entry := range ignore {
 		requireWriteLn(buff, gitIgnoreFileName, entry)
+	}
+
+	if err := buff.Flush(); err != nil {
+		log.Fatalf("failed to write buffer to file %s: %s", gitIgnoreFileName, err)
 	}
 }
 

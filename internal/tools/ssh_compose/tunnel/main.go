@@ -3,8 +3,8 @@ package tunnel
 import (
 	"strings"
 
-	"ssh-compose/internal/compose"
-	"ssh-compose/internal/hosts"
+	"vpdb-dev-tool/internal/tools/ssh_compose/compose"
+	"vpdb-dev-tool/internal/tools/ssh_compose/hosts"
 )
 
 type Config struct {

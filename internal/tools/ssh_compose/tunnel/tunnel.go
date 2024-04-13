@@ -6,9 +6,9 @@ import (
 	"strconv"
 	"strings"
 
-	"ssh-compose/internal/compose"
-	"ssh-compose/internal/env"
-	"ssh-compose/internal/hosts"
+	"vpdb-dev-tool/internal/tools/ssh_compose/compose"
+	"vpdb-dev-tool/internal/tools/ssh_compose/env"
+	"vpdb-dev-tool/internal/tools/ssh_compose/hosts"
 )
 
 const (
@@ -33,7 +33,7 @@ func makeServiceName(host hosts.Host) string {
 	return prefixTunnel + strings.ToLower(rgxHostToName.ReplaceAllString(host.Address, "_")) + "_" + strconv.Itoa(int(host.Port))
 }
 
-func envToRequiredInjectVar(envKey string, ) string {
+func envToRequiredInjectVar(envKey string) string {
 	return "${" + envKey + ":?}"
 }
 

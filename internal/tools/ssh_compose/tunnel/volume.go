@@ -1,8 +1,8 @@
 package tunnel
 
 import (
-	"ssh-compose/internal/compose"
-	"ssh-compose/internal/env"
+	"vpdb-dev-tool/internal/tools/ssh_compose/compose"
+	"vpdb-dev-tool/internal/tools/ssh_compose/env"
 )
 
 func makeVolumes() []compose.Volume {

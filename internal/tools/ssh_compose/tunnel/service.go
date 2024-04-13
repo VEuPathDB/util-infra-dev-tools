@@ -3,9 +3,9 @@ package tunnel
 import (
 	"strings"
 
-	"ssh-compose/internal/compose"
-	"ssh-compose/internal/env"
-	"ssh-compose/internal/hosts"
+	"vpdb-dev-tool/internal/tools/ssh_compose/compose"
+	"vpdb-dev-tool/internal/tools/ssh_compose/env"
+	"vpdb-dev-tool/internal/tools/ssh_compose/hosts"
 )
 
 func buildService(name, image, hostString string, host hosts.Host, volumes []compose.Volume) compose.Service {
