@@ -1,0 +1,24 @@
+= tunnel-snake
+
+An ill-conceived idea for tunneling connections targeting any of a configured
+set remote resources through a single server kept for reference purposes only.
+
+The idea was to use aliases for the socket-server container for the desired
+remote resources.  Connections to those resources from other containers on the
+docker network would then be forwarded to the socket-server container.  The
+socket-server would hopefully then be able to use the target address from the
+incoming connections to determine what remote resource to tunnel to, then proxy
+the connection through SSH to that remote resource.
+
+This approach doesn't work because the original requested URL is lost by the
+time the TCP connection is established with the socket-server.  All the info the
+socket-server has is the incoming connection's target IP (the IP of the
+socket-server's container) which can't be used to determine the actual desired
+connection target.
+
+Basically Container-A attempts to connect to `some.host.com`, docker's built-in
+DNS routes `some.host.com` to the socket-server container's IP `172.1.0.143`.
+Instead of seeing `some.host.com` in the incoming connection, the socket-server
+sees `172.1.0.143` meaning the socket-server doesn't know that the target URL
+was originally `some.host.com` and cannot forward the connection to that
+address.

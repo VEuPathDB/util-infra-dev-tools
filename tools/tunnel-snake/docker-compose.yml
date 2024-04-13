@@ -1,0 +1,24 @@
+services:
+  forwarding:
+    image: veupathdb/tunnel-snake:latest
+    build:
+      context: .
+    volumes:
+    - type: bind
+      source: ${SSH_AUTH_SOCKET_SOURCE:-$SSH_AUTH_SOCK}
+      target: ${SSH_AUTH_SOCKET_TARGET:-$SSH_AUTH_SOCK}
+    environment:
+      TUNNEL_USER: ${TUNNEL_USER:?}
+      TUNNEL_HOST: ${TUNNEL_HOST:?}
+      TUNNEL_PORTS: 389,9000,1521  # ldap,s3,oracle
+      SSH_AUTH_SOCK: ${SSH_AUTH_SOCKET_TARGET:-$SSH_AUTH_SOCK}
+    networks:
+      internal:
+        aliases:
+        - ldap1.somehost.com
+        - s3.somehost.com
+        - oracle.somehost.com
+
+networks:
+  internal:
+    external: false
