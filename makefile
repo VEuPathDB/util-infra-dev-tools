@@ -1,7 +1,8 @@
 GIT_TAG = $(shell git describe --tags --abbrev=0 2>/dev/null || echo "alpha")
 GIT_COMMIT = $(shell git rev-parse HEAD)
 BUILD_DATE = $(shell date --rfc-3339=seconds)
-
+CURRENT_OS = $(shell uname | tr '[:upper:]' '[:lower:]')
+OS_TARGETS = linux darwin windows
 
 .PHONY: default
 default:
@@ -14,22 +15,23 @@ build: bin/vpdb
 clean:
 	@rm -rf bin
 
-bin/linux/vpdb: clean
-	@mkdir -p bin/linux
-	@env CGO_ENABLED=0 GOOS=linux GOARCH=amd64 \
+.PHONY: release
+release: clean $(foreach os,$(OS_TARGETS),bin/vpdb-$(os).zip)
+
+bin/vpdb: bin/$(CURRENT_OS)/vpdb
+	@cp $< $@
+
+.SECONDARY:
+bin/%/vpdb:
+	@mkdir -p bin/$*
+	@env CGO_ENABLED=0 GOOS=$* GOARCH=amd64 \
 		go build -o $@ \
 		-ldflags="-X 'main.Version=$(GIT_TAG)' -X 'main.BuildDate=$(BUILD_DATE)' -X 'main.Commit=$(GIT_COMMIT)'" \
 		cmd/main.go
 
-bin/darwin/vpdb: clean
-	@mkdir -p bin/darwin
-	@env CGO_ENABLED=0 GOOS=darwin GOARCH=amd64 \
-		go build -o $@ \
-		-ldflags="-X 'main.Version=$(GIT_TAG)' -X 'main.BuildDate=$(BUILD_DATE)' -X 'main.Commit=$(GIT_COMMIT)'" \
-		cmd/main.go
-
-bin/vpdb-linux.tar.gz: bin/linux/vpdb
-	@rm bin/$@
-	@cd bin/linux && tar -czf $(@F) vpdb && cp $(@F) ..
-
-bin/vpdb-darwin.tar.gz: bin/darwin/vpdb
+bin/vpdb-%.zip: bin/%/vpdb
+	@rm -f $@
+	@cd bin/$* \
+		&& if [ "$*" = "windows" ]; then mv vpdb vpdb.exe && zip -q $(@F) vpdb.exe; else zip -q $(@F) vpdb; fi \
+		&& mv $(@F) ..
+	@rm -rf bin/$*

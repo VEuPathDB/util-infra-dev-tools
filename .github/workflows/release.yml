@@ -1,0 +1,19 @@
+name: binary-release
+on:
+  push:
+    tags:
+    - 'v*'
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+    - name: checkout
+      uses: actions/checkout@v4
+    - name: build
+      run: make release
+    - name: release
+      uses: softprops/action-gh-release@v2
+      with:
+        draft: true
+        files: bin/*.zip
+        generate_release_notes: true
