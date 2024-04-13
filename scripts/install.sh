@@ -58,6 +58,7 @@ unzip -qq -o ${tmpFileName} -d "${binDir}"
 trap 'rm -f $tmpFileName' EXIT
 
 if command -v vpdb >/dev/null; then
+  vpdb
   exit
 fi
 
@@ -75,3 +76,5 @@ if [ -f "$HOME/.bashrc" ]; then
     printSourceHelp "$HOME/.bashrc"
   fi
 fi
+
+vpdb
