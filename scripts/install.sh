@@ -53,7 +53,7 @@ binDir="${HOME}/.local/bin"
 
 curl -Lso ${tmpFileName} "$(getDownloadURL "$osName")"
 mkdir -p "${binDir}"
-unzip -qq ${tmpFileName} -d "${binDir}"
+unzip -qq -o ${tmpFileName} -d "${binDir}"
 
 trap 'rm -f $tmpFileName' EXIT
 
