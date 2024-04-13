@@ -9,6 +9,10 @@ jobs:
     steps:
     - name: checkout
       uses: actions/checkout@v4
+    - name: install-go
+      uses: actions/setup-go@v5
+      with:
+        go-version-file: go.mod
     - name: build
       run: make release
     - name: release
