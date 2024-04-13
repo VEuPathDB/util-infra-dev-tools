@@ -45,9 +45,9 @@ binDir="${HOME}/.local/bin"
 
 curl -Lso ${tmpFileName} "$(getDownloadURL "$osName")"
 mkdir -p "${binDir}"
-unzip ${tmpFileName} -d binDir
+unzip ${tmpFileName} -d "${binDir}"
 
-trap "rm -f $tmpFileName" EXIT
+trap 'rm -f $tmpFileName' EXIT
 
 if command -v vpdb; then
   exit
