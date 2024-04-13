@@ -14,9 +14,22 @@ build: bin/vpdb
 clean:
 	@rm -rf bin
 
-bin/vpdb: clean
-	@mkdir -p bin
+bin/linux/vpdb: clean
+	@mkdir -p bin/linux
 	@env CGO_ENABLED=0 GOOS=linux GOARCH=amd64 \
-		go build -o bin/vpdb \
+		go build -o $@ \
 		-ldflags="-X 'main.Version=$(GIT_TAG)' -X 'main.BuildDate=$(BUILD_DATE)' -X 'main.Commit=$(GIT_COMMIT)'" \
 		cmd/main.go
+
+bin/darwin/vpdb: clean
+	@mkdir -p bin/darwin
+	@env CGO_ENABLED=0 GOOS=darwin GOARCH=amd64 \
+		go build -o $@ \
+		-ldflags="-X 'main.Version=$(GIT_TAG)' -X 'main.BuildDate=$(BUILD_DATE)' -X 'main.Commit=$(GIT_COMMIT)'" \
+		cmd/main.go
+
+bin/vpdb-linux.tar.gz: bin/linux/vpdb
+	@rm bin/$@
+	@cd bin/linux && tar -czf $(@F) vpdb && cp $(@F) ..
+
+bin/vpdb-darwin.tar.gz: bin/darwin/vpdb
