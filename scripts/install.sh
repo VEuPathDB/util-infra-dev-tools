@@ -25,6 +25,8 @@ patchEnvRC() {
   currentPathValue=$(getPathVar "$1")
   if ! echo "$currentPathValue" | grep -q "\$HOME/.local/bin\|$HOME/.local/bin"; then
     echo "export PATH=\"\${PATH}:$HOME/.local/bin\"" >> "$1"
+    echo "To add the vpdb command to your current PATH execute:"
+    echo "  source $1"
   fi
 }
 
