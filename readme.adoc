@@ -1,0 +1,6 @@
+= VPDB Utility Commands
+
+.Installation
+----
+curl -Ls https://raw.githubusercontent.com/VEuPathDB/util-vpdb-dev-tool/main/scripts/install.sh | sh
+----
