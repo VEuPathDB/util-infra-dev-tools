@@ -23,7 +23,7 @@ getPathVar() {
 
 patchEnvRC() {
   currentPathValue=$(getPathVar "$1")
-  if ! echo "$currentPathValue" | grep -q "\$HOME/.local/bin|$HOME/.local/bin"; then
+  if ! echo "$currentPathValue" | grep -q "\$HOME/.local/bin\|$HOME/.local/bin"; then
     echo "export PATH=\"\${PATH}:$HOME/.local/bin\"" >> "$1"
   fi
 }
