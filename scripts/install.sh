@@ -1,6 +1,10 @@
 #!/usr/bin/env sh
 
-repoUrl="https://github.com/VEuPathDB/util-vpdb-dev-tool"
+organization=VEuPathDB
+repository=util-vpdb-dev-tool
+
+repoUrl="https://github.com/${organization}/${repository}"
+apiUrl=
 releaseSuffix="/releases/latest"
 
 checkPrereqs() {
@@ -10,8 +14,11 @@ checkPrereqs() {
   fi
 }
 
-getReleases() {
-  curl -L https://api.github.com/repos/VEuPathDB/util-vpdb-dev-tool/releases
+getDownloadURL() {
+  curl -L -H'X-GitHub-Api-Version: 2022-11-28' https://api.github.com/repos/${organization}/${repository}/releases/latest \
+    | grep 'browser_download_url' \
+    | grep $1 \
+    | grep -o 'http[^"]\+'
 }
 
 case $(uname | tr '[:upper:]' '[:lower:]') in
