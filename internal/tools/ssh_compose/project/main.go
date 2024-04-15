@@ -2,7 +2,6 @@ package project
 
 import (
 	"bufio"
-	"io"
 	"log"
 	"os"
 	"path"
@@ -10,8 +9,8 @@ import (
 
 	"gopkg.in/yaml.v3"
 
+	"vpdb-dev-tool/internal/lib/xio"
 	"vpdb-dev-tool/internal/tools/ssh_compose/compose"
-	"vpdb-dev-tool/internal/tools/ssh_compose/env"
 	"vpdb-dev-tool/internal/tools/ssh_compose/tunnel"
 )
 
@@ -41,16 +40,10 @@ func writeOutComposeFile(config *compose.Config) {
 }
 
 func writeOutEnvFile(hosts map[string]string) {
-	file := requireFile(envFileName, os.O_RDWR|os.O_CREATE|os.O_APPEND)
+	file := requireFile(envFileName, os.O_RDWR|os.O_CREATE)
 	defer file.Close()
 
-	if _, err := file.Seek(0, io.SeekEnd); err != nil {
-		log.Fatalf("failed to fast-forward to end of file %s: %s\n", envFileName, err)
-	}
-
-	if _, err := file.WriteString(env.BuildNewEnv(hosts)); err != nil {
-		log.Fatalf("failed to write env vars: %s", err)
-	}
+	patchEnvFile(xio.ReqRWFile{File: file}, hosts)
 }
 
 func writeOutGitIgnoreFile(tunnelConfigFile string) {

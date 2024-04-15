@@ -1,4 +1,4 @@
-GIT_TAG = $(shell git describe --tags --abbrev=0 2>/dev/null || echo "alpha")
+GIT_TAG = $(shell git describe --tags 2>/dev/null || echo "alpha")
 GIT_COMMIT = $(shell git rev-parse HEAD)
 BUILD_DATE = $(shell date --rfc-3339=seconds)
 CURRENT_OS = $(shell uname | tr '[:upper:]' '[:lower:]')
@@ -10,6 +10,10 @@ default:
 
 .PHONY: build
 build: bin/vpdb
+
+.PHONY: install
+install: bin/vpdb
+	@cp $< ${HOME}/.local/bin/vpdb
 
 .PHONY: clean
 clean:
