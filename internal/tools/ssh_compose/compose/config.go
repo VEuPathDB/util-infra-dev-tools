@@ -14,7 +14,7 @@ type Network struct {
 type Service struct {
 	// Build
 	Image       string             `yaml:"image,omitempty"`
-	DependsOn   []string           `yaml:"dependsOn,omitempty"`
+	DependsOn   []string           `yaml:"depends_on,omitempty"`
 	Entrypoint  []string           `yaml:"entrypoint,omitempty"`
 	Environment map[string]string  `yaml:"environment,omitempty"`
 	Volumes     []Volume           `yaml:"volumes,omitempty"`
