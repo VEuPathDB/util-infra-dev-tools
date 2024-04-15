@@ -58,15 +58,14 @@ unzip -qq -o ${tmpFileName} -d "${binDir}"
 trap 'rm -f $tmpFileName' EXIT
 
 if command -v vpdb >/dev/null; then
-  vpdb
+  echo "Installed vpdb-dev-tool:"
+  echo ""
+  vpdb -v
   exit
 fi
 
-printedSource=0
-
 if [ -f "$HOME/.zshrc" ]; then
   if ! patchEnvRC "$HOME/.zshrc"; then
-    printedSource=1
     printSourceHelp "$HOME/.zshrc"
   fi
 fi
@@ -77,4 +76,10 @@ if [ -f "$HOME/.bashrc" ]; then
   fi
 fi
 
-$binDir/vpdb
+if command -v vpdb >/dev/null; then
+  echo "Installed vpdb-dev-tool:"
+  echo ""
+  vpdb -v
+else
+  echo "please add ${binDir}/vpdb to your path to get started"
+fi
