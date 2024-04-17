@@ -1,7 +1,7 @@
 #!/usr/bin/env sh
 
 organization=VEuPathDB
-repository=util-vpdb-dev-tool
+repository=util-infra-dev-tools
 
 checkPrereqs() {
   if ! command -v curl; then

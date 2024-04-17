@@ -2,5 +2,5 @@
 
 .Installation
 ----
-curl -Ls https://raw.githubusercontent.com/VEuPathDB/util-vpdb-dev-tool/main/scripts/install.sh | sh
+curl -Ls https://raw.githubusercontent.com/VEuPathDB/util-infra-dev-tools/main/scripts/install.sh | sh
 ----
