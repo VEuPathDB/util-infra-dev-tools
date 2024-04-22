@@ -7,8 +7,11 @@ import (
 	"vpdb-dev-tool/internal/tools/vdi/docker"
 )
 
+const branchDesc = "VDI related utility operations."
+
 func Init(builder argo.CommandTreeBuilder) {
-	branch := cli.Branch("vdi")
+	branch := cli.Branch("vdi").
+		WithDescription(branchDesc)
 
 	vdi_docker.Init(branch)
 

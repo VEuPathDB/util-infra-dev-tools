@@ -1,43 +1,50 @@
 package vdi_projects
 
 var (
-	plugins = map[string][]string{
-		"vdi-plugin-bigwig":    {"vdi-plugin-bigwig"},
-		"vdi-plugin-biom":      {"vdi-plugin-biom"},
-		"vdi-plugin-example":   {"vdi-plugin-example"},
-		"vdi-plugin-genelist":  {"vdi-plugin-genelist"},
-		"vdi-plugin-isasimple": {"vdi-plugin-isasimple"},
-		"vdi-plugin-rnaseq":    {"vdi-plugin-rnaseq"},
+	plugins = [...]Project{
+		{Name: "vdi-plugin-bigwig", Images: []string{"vdi-plugin-bigwig"}},
+		{Name: "vdi-plugin-biom", Images: []string{"vdi-plugin-biom"}},
+		{Name: "vdi-plugin-example", Images: []string{"vdi-plugin-example"}},
+		{Name: "vdi-plugin-genelist", Images: []string{"vdi-plugin-genelist"}},
+		{Name: "vdi-plugin-isasimple", Images: []string{"vdi-plugin-isasimple"}},
+		{Name: "vdi-plugin-rnaseq", Images: []string{"vdi-plugin-rnaseq"}},
 	}
-	baseImages = map[string][]string{
-		"docker-gus-apidb-base":     {"gus-apidb-base"},
-		"vdi-plugin-handler-server": {"vdi-plugin-handler-server"},
-		"vdi-docker-plugin-base":    {"vdi-plugin-base"},
+	baseImages = [...]Project{
+		{Name: "docker-gus-apidb-base", Images: []string{"gus-apidb-base"}},
+		{Name: "vdi-plugin-handler-server", Images: []string{"vdi-plugin-handler-server"}},
+		{Name: "vdi-docker-plugin-base", Images: []string{"vdi-plugin-base"}},
 	}
-	rootService = map[string][]string{
-		"vdi-service": {"vdi-service"},
+	rootService = [...]Project{
+		{Name: "vdi-service", Images: []string{"vdi-service"}},
 	}
-	support = map[string][]string{
-		"vdi-internal-db":     {"vdi-internal-db"},
-		"docker-apache-kafka": {"apache-kafka"},
+	support = [...]Project{
+		{Name: "vdi-internal-db", Images: []string{"vdi-internal-db"}},
+		{Name: "docker-apache-kafka", Images: []string{"apache-kafka"}},
 	}
-	libraries = map[string][]string{
-		"vdi-component-common": {},
-		"vdi-component-json":   {},
+	libraries = [...]Project{
+		{Name: "vdi-component-common", Images: []string{}},
+		{Name: "vdi-component-json", Images: []string{}},
 	}
 )
 
-func DeployableImageProducers() map[string][]string {
-	out := make(map[string][]string, len(plugins)+len(rootService)+len(support))
+type Project struct {
+	Name   string
+	Images []string
+}
 
-	for k, v := range plugins {
-		out[k] = v
+func DeployableImageProducers() []Project {
+	out := make([]Project, 0, len(plugins)+len(rootService)+len(support))
+
+	for i := range rootService {
+		out = append(out, rootService[i])
 	}
-	for k, v := range rootService {
-		out[k] = v
+
+	for i := range support {
+		out = append(out, support[i])
 	}
-	for k, v := range support {
-		out[k] = v
+
+	for i := range plugins {
+		out = append(out, plugins[i])
 	}
 
 	return out
