@@ -15,7 +15,7 @@ containers that may be used for stack-local containers to access external
 resources that require SSH tunnelling to reach.
 
 .Help Text
-[source, shell]
+[source, shell-session]
 ----
 $ vpdb ssh-compose --help
 Usage:
