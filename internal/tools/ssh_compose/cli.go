@@ -5,6 +5,7 @@ import (
 
 	"github.com/Foxcapades/Argonaut"
 	"github.com/Foxcapades/Argonaut/pkg/argo"
+
 	"vpdb-dev-tool/internal/tools/ssh_compose/hosts"
 )
 
@@ -20,6 +21,10 @@ const usage = "Generates a docker-compose configuration file and required " +
 const imageFlagDocs = "Specifies an alternative docker image to use for the SSH tunnel containers."
 
 const genFlagDocs = "Generates an example host-list yaml file."
+
+const hostListDocs = "YAML file providing mapping of hosts to dependent docker " +
+	"compose service names.  An example may be generated via the --gen-example " +
+	"flag."
 
 func Init(tree argo.CommandTreeBuilder) {
 	var hostsFile string
@@ -38,6 +43,7 @@ func Init(tree argo.CommandTreeBuilder) {
 			})).
 		WithArgument(cli.Argument().
 			WithName("hosts-list").
+			WithDescription(hostListDocs).
 			WithBinding(&hostsFile).
 			Require()).
 		WithCallback(func(argo.CommandLeaf) { main(hostsFile, image) }))
