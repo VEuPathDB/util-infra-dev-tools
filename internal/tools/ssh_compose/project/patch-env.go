@@ -52,6 +52,18 @@ func patchEnvFile(file xio.ReqRWFile, hosts map[string]string) {
 
 	_reqWriteEnvLine(file, fmt.Sprintf("\n\n# Generated @ %s", time.Now().Format(time.DateTime)))
 
+	if !matches[env.TunnelUser] {
+		_reqWriteEnvPair(file, env.TunnelUser, "")
+	}
+
+	if !matches[env.TunnelHost] {
+		_reqWriteEnvPair(file, env.TunnelHost, "")
+	}
+
+	if !matches[env.TunnelPort] {
+		_reqWriteEnvPair(file, env.TunnelPort, "")
+	}
+
 	for key, val := range hosts {
 		if !matches[key] {
 			_reqWriteEnvPair(file, key, val)
