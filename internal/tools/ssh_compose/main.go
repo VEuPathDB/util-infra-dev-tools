@@ -11,10 +11,13 @@ import (
 
 const followupSteps = "\n" +
 	"Next steps:\n" +
-	"* Edit the project's `.env` file to fill in any newly generated variables.\n" +
-	"* Add `-f " + project.OutputComposeFileName + "` to any docker compose" +
+	"  * Edit the project's `.env` file to fill in any newly generated variables.\n" +
+	"  * Add `-f " + project.OutputComposeFileName + "` to any docker compose" +
 	" up/down commands being used to include the newly generated ssh tunnel" +
-	" containers."
+	" containers.\n" +
+	"  * Ensure that an ssh-agent instance is running which will provide the" +
+	" value for the SSH_AUTH_SOCK environment variable used by the generated" +
+	" compose file."
 
 func main(hostsFile, image string) {
 	hostList := hosts.ReadHostsFile(hostsFile)
