@@ -15,9 +15,9 @@ import (
 )
 
 const (
-	outputComposeFileName = "docker-compose.ssh.yml"
-	envFileName           = ".env"
-	gitIgnoreFileName     = ".gitignore"
+	OutputComposeFileName = "docker-compose.ssh.yml"
+	EnvFileName           = ".env"
+	GitIgnoreFileName     = ".gitignore"
 )
 
 func WriteOutConfigs(configs tunnel.BuiltConfigs, tunnelConfigFile string) {
@@ -27,7 +27,7 @@ func WriteOutConfigs(configs tunnel.BuiltConfigs, tunnelConfigFile string) {
 }
 
 func writeOutComposeFile(config *compose.Config) {
-	file := requireFile(outputComposeFileName, os.O_WRONLY|os.O_CREATE|os.O_TRUNC)
+	file := requireFile(OutputComposeFileName, os.O_WRONLY|os.O_CREATE|os.O_TRUNC)
 	defer file.Close()
 
 	enc := yaml.NewEncoder(file)
@@ -40,28 +40,28 @@ func writeOutComposeFile(config *compose.Config) {
 }
 
 func writeOutEnvFile(hosts map[string]string) {
-	file := requireFile(envFileName, os.O_RDWR|os.O_CREATE)
+	file := requireFile(EnvFileName, os.O_RDWR|os.O_CREATE)
 	defer file.Close()
 
 	patchEnvFile(xio.ReqRWFile{File: file}, hosts)
 }
 
 func writeOutGitIgnoreFile(tunnelConfigFile string) {
-	_, err := os.Stat(gitIgnoreFileName)
+	_, err := os.Stat(GitIgnoreFileName)
 	if err != nil {
 		if os.IsNotExist(err) {
 			createGitIgnoreFile(tunnelConfigFile)
 			return
 		}
 
-		log.Fatalf("failed to stat file %s: %s\n", gitIgnoreFileName, err)
+		log.Fatalf("failed to stat file %s: %s\n", GitIgnoreFileName, err)
 	}
 
 	patchGitIgnoreFile(tunnelConfigFile)
 }
 
 func patchGitIgnoreFile(tunnelConfigFile string) {
-	file := requireFile(gitIgnoreFileName, os.O_RDWR|os.O_APPEND)
+	file := requireFile(GitIgnoreFileName, os.O_RDWR|os.O_APPEND)
 	defer file.Close()
 
 	entries := make(map[string]bool, 32)
@@ -78,26 +78,26 @@ func patchGitIgnoreFile(tunnelConfigFile string) {
 	}
 
 	if scanner.Err() != nil {
-		log.Fatalf("encountered error while scanning %s: %s", gitIgnoreFileName, scanner.Err())
+		log.Fatalf("encountered error while scanning %s: %s", GitIgnoreFileName, scanner.Err())
 	}
 
 	buff := bufio.NewWriter(file)
 
-	if !entries[outputComposeFileName] {
-		requireWriteLn(buff, gitIgnoreFileName, outputComposeFileName)
+	if !entries[OutputComposeFileName] {
+		requireWriteLn(buff, GitIgnoreFileName, OutputComposeFileName)
 	}
 
 	if !entries[tunnelConfigFile] {
-		requireWriteLn(buff, gitIgnoreFileName, tunnelConfigFile)
+		requireWriteLn(buff, GitIgnoreFileName, tunnelConfigFile)
 	}
 
 	if err := buff.Flush(); err != nil {
-		log.Fatalf("failed to write buffer to file %s: %s", gitIgnoreFileName, err)
+		log.Fatalf("failed to write buffer to file %s: %s", GitIgnoreFileName, err)
 	}
 }
 
 func createGitIgnoreFile(tunnelConfigFile string) {
-	file := requireFile(gitIgnoreFileName, os.O_WRONLY|os.O_CREATE|os.O_EXCL)
+	file := requireFile(GitIgnoreFileName, os.O_WRONLY|os.O_CREATE|os.O_EXCL)
 	defer file.Close()
 
 	buff := bufio.NewWriter(file)
@@ -120,7 +120,7 @@ func createGitIgnoreFile(tunnelConfigFile string) {
 		".settings",
 		"*~",
 		".*~",
-		outputComposeFileName,
+		OutputComposeFileName,
 		tunnelConfigFile,
 	}
 
@@ -129,11 +129,11 @@ func createGitIgnoreFile(tunnelConfigFile string) {
 	}
 
 	for _, entry := range ignore {
-		requireWriteLn(buff, gitIgnoreFileName, entry)
+		requireWriteLn(buff, GitIgnoreFileName, entry)
 	}
 
 	if err := buff.Flush(); err != nil {
-		log.Fatalf("failed to write buffer to file %s: %s", gitIgnoreFileName, err)
+		log.Fatalf("failed to write buffer to file %s: %s", GitIgnoreFileName, err)
 	}
 }
 

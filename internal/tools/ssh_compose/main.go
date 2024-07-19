@@ -1,12 +1,20 @@
 package ssh_compose
 
 import (
+	"fmt"
 	"log"
 
 	"vpdb-dev-tool/internal/tools/ssh_compose/hosts"
 	"vpdb-dev-tool/internal/tools/ssh_compose/project"
 	"vpdb-dev-tool/internal/tools/ssh_compose/tunnel"
 )
+
+const followupSteps = "\n" +
+	"Next steps:\n" +
+	"* Edit the project's `.env` file to fill in any newly generated variables.\n" +
+	"* Add `-f " + project.OutputComposeFileName + "` to any docker compose" +
+	" up/down commands being used to include the newly generated ssh tunnel" +
+	" containers."
 
 func main(hostsFile, image string) {
 	hostList := hosts.ReadHostsFile(hostsFile)
@@ -21,4 +29,6 @@ func main(hostsFile, image string) {
 	})
 
 	project.WriteOutConfigs(tunnelConfigs, hostsFile)
+
+	fmt.Println(followupSteps)
 }
