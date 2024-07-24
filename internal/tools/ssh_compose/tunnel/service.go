@@ -20,6 +20,7 @@ func buildService(name, image, hostString string, host hosts.Host, volumes []com
 			env.SSHSockDef: injectionRef[env.SSHSockTgt],
 		},
 		Networks: map[string]compose.Network{
+		        "default": {},
 			"internal": {
 				Aliases: []string{reqEnvName},
 			},
