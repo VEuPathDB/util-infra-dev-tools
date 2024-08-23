@@ -32,6 +32,8 @@ func RequireCredentials() (creds Credentials) {
 	creds.Token, _ = os.LookupEnv(likelyTokenEnvKey)
 
 	if len(creds.Username) == 0 || len(creds.Token) == 0 {
+		logrus.Debugf("environment was missing github username or token, checking for global gradle.properties")
+
 		if !tryGradlePropsForCreds(&creds) {
 			logrus.Fatal("need GitHub credentials for this operation but none were found.\n\nPlease provide them on the environment or via a global gradle.properties file.")
 		}
@@ -40,12 +42,11 @@ func RequireCredentials() (creds Credentials) {
 	return
 }
 
-// TODO: make this windows compatible
 func tryGradlePropsForCreds(creds *Credentials) bool {
-	home, ok := os.LookupEnv("HOME")
+	home, err := os.UserHomeDir()
 
 	// no $HOME env var?
-	if !ok {
+	if err != nil {
 		return false
 	}
 
