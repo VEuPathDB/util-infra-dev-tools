@@ -1,6 +1,6 @@
 module vpdb-dev-tool
 
-go 1.22
+go 1.23
 
 require (
 	github.com/Foxcapades/Argonaut v1.4.8
@@ -9,4 +9,7 @@ require (
 	gopkg.in/yaml.v3 v3.0.1
 )
 
-require golang.org/x/sys v0.0.0-20220715151400-c0bba94af5f8 // indirect
+require (
+	github.com/stretchr/testify v1.8.4 // indirect
+	golang.org/x/sys v0.1.0 // indirect
+)

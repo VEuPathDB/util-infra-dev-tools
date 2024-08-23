@@ -21,7 +21,7 @@ func ListTags(repo string) ([]string, error) {
 	var tagList []GitHubTag
 
 	if code, err := res.GetResponseCode(); err != nil {
-		logrus.Errorf("request to github api failed with error: %s", err)
+		logrus.Errorf("request to github api failed with error: %s\n", err)
 		return nil, err
 	} else if code != 200 {
 		msg := fmt.Sprintf("got HTTP code %d while requesting tag list for GitHub repo %s", code, repo)
