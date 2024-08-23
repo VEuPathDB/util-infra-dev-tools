@@ -18,7 +18,7 @@ curl -Ls https://raw.githubusercontent.com/VEuPathDB/util-infra-dev-tools/main/s
 
 Usage::
 +
-[source, shell-session]
+[source, shell]
 ----
 $ vpdb ssh-compose --gen-example
 # or
@@ -44,7 +44,7 @@ intrusions more pointed.
 .Help Text
 [%collapsible]
 ====
-[source, shell-session]
+[source, shell]
 ----
 $ vpdb ssh-compose --help
 Usage:
@@ -116,7 +116,7 @@ hosts:
 
 Usage::
 +
-[source, shell-session]
+[source, shell]
 $ vpdb stack use [-b [backup-file-name]] [-f compose-file]... <qa|prod|latest>
 
 Pins the tag versions for services to those in use on QA, production, or dev
@@ -129,7 +129,7 @@ for those environment variables in the `.env` file.
 .Help Text
 [%collapsible]
 ====
-[source, shell-session]
+[source, shell]
 ----
 $ vpdb stack use --help
 Usage:
@@ -191,7 +191,7 @@ published image tags.
 .Help Text
 [%collapsible]
 ====
-[source, shell-session]
+[source, shell]
 ----
 $ vpdb vdi gen-tagger --help
 Usage:
