@@ -10,10 +10,12 @@ import (
 	"vpdb-dev-tool/internal/lib/util"
 )
 
+// MustPathExists wraps PathExists and panics on error.
 func MustPathExists(path string) bool {
 	return util.MustReturn(PathExists(path))
 }
 
+// PathExists tests whether a given path exists on the system.
 func PathExists(path string) (bool, error) {
 	if _, err := os.Stat(path); err != nil {
 		if os.IsNotExist(err) {
@@ -26,6 +28,7 @@ func PathExists(path string) (bool, error) {
 	return true, nil
 }
 
+// MustOpen attempts to open a target file and panics on failure.
 func MustOpen(path string) *os.File {
 	if file, err := os.Open(path); err != nil {
 		logrus.Fatalf("failed to open file %s: %s", path, err)
@@ -36,6 +39,7 @@ func MustOpen(path string) *os.File {
 	}
 }
 
+// MustClose attempts to close the given file and logs an error on failure.
 func MustClose(file *os.File) {
 	if err := file.Close(); err != nil {
 		if !errors.Is(err, os.ErrClosed) {
@@ -46,6 +50,8 @@ func MustClose(file *os.File) {
 	}
 }
 
+// MustCreateFile attempts to create a new file and panics if the file already
+// exists or if creating a new file failed.
 func MustCreateFile(name string) *os.File {
 	if file, err := os.OpenFile(name, os.O_CREATE|os.O_EXCL|os.O_WRONLY, 0644); err != nil {
 		logrus.Fatalf("failed to create target file %s: %s", name, err)
@@ -55,10 +61,12 @@ func MustCreateFile(name string) *os.File {
 	}
 }
 
+// MustCopyFile wraps CopyFile and panics on error.
 func MustCopyFile(from, to string) {
 	util.Must(CopyFile(from, to))
 }
 
+// CopyFile copies a file from one path to another.
 func CopyFile(from, to string) error {
 	fstat, err := os.Stat(from)
 	if err != nil {

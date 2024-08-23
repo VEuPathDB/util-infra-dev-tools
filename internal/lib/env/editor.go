@@ -12,19 +12,48 @@ import (
 	"vpdb-dev-tool/internal/lib/xio"
 )
 
+// Editor defines an API for modifying a stream of environment variable
+// definitions via specific actions.
+//
+// Edits are applied in the following order, with no more than a single edit
+// being applied to a single environment variable:
+//
+// 1. replace
+// 2. remove
+// 3. add
 type Editor interface {
+
+	// CommentOutOriginalValueOnChange configures the Editor instance to retain
+	// the original values when making a change to a stream by writing out the
+	// original line as a comment.
 	CommentOutOriginalValueOnChange() Editor
 
+	// AddOrReplace configures the Editor instance to set the given key to the
+	// given value overwriting existing environment variable definitions on
+	// conflict.
 	AddOrReplace(key, value string) Editor
 
+	// AddIfAbsent configures the Editor instance to add the given key/value pair
+	// to the stream of environment variables only if doing so would not conflict
+	// with an existing environment variable definition.
 	AddIfAbsent(key, value string) Editor
 
+	// Remove configures the Editor instance to remove a target environment
+	// variable from the stream if it is encountered.
 	Remove(key string) Editor
 
+	// RemoveByRegex configures the Editor instance to remove any environment
+	// variables from the stream whose keys match a given regular expression if
+	// encountered.
 	RemoveByRegex(regex *regexp.Regexp) Editor
 
+	// RemoveMatching configures the Editor instance to remove any environment
+	// variables from the stream whose keys match a given KeyPredicate if
+	// encountered.
 	RemoveMatching(predicate KeyPredicate) Editor
 
+	// ApplyEdits applies all configured environment modifications to the given
+	// input stream, writing the modified output to the given output stream.
 	ApplyEdits(input io.Reader, output io.Writer)
 }
 
@@ -37,8 +66,18 @@ func NewEditor() Editor {
 
 // //
 
+// KeyPredicate defines an API for testing environment variable key strings.
 type KeyPredicate interface {
 	Matches(key string) bool
+}
+
+// KeyPredicateFunc provides a wrapper allowing for arbitrary functions to
+// implement the KeyPredicate interface, provided they have a matching
+// signature.
+type KeyPredicateFunc func(key string) bool
+
+func (k KeyPredicateFunc) Matches(key string) bool {
+	return k(key)
 }
 
 type exactPredicate string
