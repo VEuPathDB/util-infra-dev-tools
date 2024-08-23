@@ -138,10 +138,10 @@ Usage:
     Updates the local .env file to pin the stack image versions to a specific set of images.
 
 Flags
-  -b [arg] | --make-backup=[arg]
+  -b [file] | --make-backup=[file]
       Backup .env file (if exist) before writing modifications.
 
-      May optionally be used to specify the backup name if desired.
+      May optionally be used to specify the name of the backup file if desired.
   -f <path> | --compose-file=<path>
       Specifies a docker compose file containing images whose versions should be pinned.
       May be provided more than once.
