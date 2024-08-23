@@ -1,6 +1,7 @@
 = VPDB Development Utility Commands
 ifdef::env-github[]
-:warning-caption: image:docs/assets/warning.svg[]
+:icons: image
+:warning-caption: image::docs/assets/warning.svg[]
 endif::[]
 ifndef::env-github[]
 :icons: font
