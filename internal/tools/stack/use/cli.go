@@ -25,8 +25,9 @@ const (
 		"May be provided more than once.\n\n" +
 		"If unused, then 'docker-compose.yml' will be assumed."
 
-	backupFlagDesc = "Backup .env file (if exist) before writing modifications.\n\n" +
-		"May optionally be used to specify the backup name if desired."
+	backupFlagDesc = "Backup .env file (if exists) before writing " +
+		"modifications.\n\n" +
+		"May optionally be used to specify the name of the backup file if desired."
 
 	noBackupIndicator = "I, the user of this cli tool, hereby certify that I do" +
 		" not want a backup made of my '.env' file."
@@ -57,7 +58,10 @@ func Init(branch argo.CommandBranchBuilder) {
 			Require()).
 		WithFlag(cli.ComboFlag('b', "make-backup").
 			WithDescription(backupFlagDesc).
-			WithBindingAndDefault(&opts.backup, noBackupIndicator, false)).
+			WithArgument(cli.Argument().
+				WithName("file").
+				WithBinding(&opts.backup).
+				WithDefault(noBackupIndicator))).
 		WithFlag(cli.ComboFlag('f', "compose-file").
 			WithDescription(fileFlagDesc).
 			WithArgument(cli.Argument().
