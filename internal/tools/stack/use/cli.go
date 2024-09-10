@@ -67,14 +67,16 @@ func Init(branch argo.CommandBranchBuilder) {
 			WithArgument(cli.Argument().
 				WithName("path").
 				WithBinding(&opts.files).
-				WithValidator(func(path string) error {
-					if ok, err := xos.PathExists(path); err != nil {
-						return err
-					} else if !ok {
-						return fmt.Errorf(`specified compose file "%s" does not exist`, path)
-					} else {
-						return nil
+				WithValidator(func(files []string, raw string) error {
+					for _, path := range files {
+						if ok, err := xos.PathExists(path); err != nil {
+							return err
+						} else if !ok {
+							return fmt.Errorf(`specified compose file "%s" does not exist`, path)
+						}
 					}
+
+					return nil
 				}).
 				Require())).
 		WithCallback(func(_ argo.CommandLeaf) { run(opts) }))
