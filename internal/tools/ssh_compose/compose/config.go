@@ -3,7 +3,6 @@ package compose
 type Config struct {
 	Version  string             `yaml:"version"`
 	Services map[string]Service `yaml:"services,omitempty"`
-	Volumes  []Volume           `yaml:"volumes,omitempty"`
 	Networks map[string]Network `yaml:"networks,omitempty"`
 }
 

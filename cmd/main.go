@@ -11,6 +11,7 @@ import (
 	"vpdb-dev-tool/internal/lib/cmd"
 	"vpdb-dev-tool/internal/lib/logging"
 	"vpdb-dev-tool/internal/tools/ssh_compose"
+	"vpdb-dev-tool/internal/tools/stack"
 	"vpdb-dev-tool/internal/tools/vdi"
 )
 
@@ -43,6 +44,7 @@ func main() {
 
 	ssh_compose.Init(tree)
 	vdi.Init(tree)
+	stack.Init(tree)
 
 	_, err := tree.Parse(os.Args)
 

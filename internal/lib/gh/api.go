@@ -20,3 +20,7 @@ func repoURL(repo string) string {
 func repoTagsURL(repo string) string {
 	return fmt.Sprintf("%s/repos/%s/%s/tags", apiURL, organization, repo)
 }
+
+func repoContentURL(repo, filepath string) string {
+	return fmt.Sprintf("%s/repos/%s/%s/contents/%s", apiURL, organization, repo, filepath)
+}

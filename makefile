@@ -4,6 +4,8 @@ BUILD_DATE = $(shell date --rfc-3339=seconds)
 CURRENT_OS = $(shell uname | tr '[:upper:]' '[:lower:]')
 OS_TARGETS = linux darwin windows
 
+GO_FILES := $(shell find . -type f -name '*.go')
+
 .PHONY: default
 default:
 	@# do nothing
@@ -22,11 +24,15 @@ clean:
 .PHONY: release
 release: clean $(foreach os,$(OS_TARGETS),bin/vpdb-$(os).zip)
 
+.PHONY: publish-local
+publish-local: bin/$(CURRENT_OS)/vpdb
+	@cp $< $${HOME}/.local/bin/vpdb
+
 bin/vpdb: bin/$(CURRENT_OS)/vpdb
 	@cp $< $@
 
 .SECONDARY:
-bin/%/vpdb:
+bin/%/vpdb: $(GO_FILES)
 	@mkdir -p bin/$*
 	@env CGO_ENABLED=0 GOOS=$* GOARCH=amd64 \
 		go build -o $@ \
