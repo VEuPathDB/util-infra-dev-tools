@@ -107,8 +107,7 @@ func tryGradlePropsForCreds(creds *Credentials) bool {
 //	^ *[=:] *(.*)$
 //
 // TODO: this does not handle the case where someone has a multiline property
-//
-//	definition.
+//       definition.
 func eatPropsValue(line []byte) (string, bool) {
 	// If the line ended at the end of the variable name, there is no value.
 	if len(line) == 0 {
