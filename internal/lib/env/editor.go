@@ -107,11 +107,17 @@ func (e *envEditor) CommentOutOriginalValueOnChange() Editor {
 }
 
 func (e *envEditor) AddOrReplace(key, value string) Editor {
+	if _, ok := e.softSets[key]; ok {
+		logrus.Fatalf("configured env.Editor to both AddOrReplace and AddIfAbsent environment variable \"%s\"", key)
+	}
 	e.hardSets[key] = value
 	return e
 }
 
 func (e *envEditor) AddIfAbsent(key, value string) Editor {
+	if _, ok := e.hardSets[key]; ok {
+		logrus.Fatalf("configured env.Editor to both AddOrReplace and AddIfAbsent environment variable \"%s\"", key)
+	}
 	e.softSets[key] = value
 	return e
 }
