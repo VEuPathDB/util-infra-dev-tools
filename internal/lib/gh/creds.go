@@ -98,44 +98,57 @@ func tryGradlePropsForCreds(creds *Credentials) bool {
 	return false
 }
 
+// eatPropsValue attempts to parse the segment of a .properties file variable
+// definition immediately following the variable name.
+//
+// The variable definition may be followed by any number of spaces, a divider,
+// any number of additional spaces, then a value.
+//
+//	^ *[=:] *(.*)$
+//
 // TODO: this does not handle the case where someone has a multiline property
-//       definition.
+//
+//	definition.
 func eatPropsValue(line []byte) (string, bool) {
+	// If the line ended at the end of the variable name, there is no value.
 	if len(line) == 0 {
 		return "", false
 	}
 
 	i := 0
 
-	// the next character MUST be a divider to be valid.
-	if line[i] != '=' && !xbytes.IsWhitespace(line[i]) && line[i] != ':' {
-		return "", false
-	}
-
+	// Skip over any leading whitespace before a possible divider
 	for len(line) > i && xbytes.IsWhitespace(line[i]) {
 		i++
 	}
 
-	// it was all whitespace
+	// If it was all whitespace, there is no value
 	if i >= len(line) {
 		return "", false
 	}
 
+	// eat the divider
 	if line[i] == '=' || line[i] == ':' {
 		i++
 
+		// if that ends the line, then the value was empty.
 		if i >= len(line) {
-			return "", false
+			return "", true
 		}
 
+		// eat any leading whitespace before the possible value
 		for len(line) > i && xbytes.IsWhitespace(line[i]) {
 			i++
 		}
 
+		// empty value
 		if i >= len(line) {
-			return "", false
+			return "", true
 		}
-	}
 
-	return string(line[i:]), true
+		return string(line[i:]), true
+	} else {
+		// we hit a character that was not a valid divider, ignore this line.
+		return "", false
+	}
 }
