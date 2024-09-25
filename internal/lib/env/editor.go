@@ -3,8 +3,10 @@ package env
 import (
 	"bufio"
 	"bytes"
+	"fmt"
 	"io"
 	"regexp"
+	"time"
 
 	"github.com/sirupsen/logrus"
 
@@ -252,7 +254,7 @@ SCANNING:
 		// insert a blank line between the original input and the new stuff (if
 		// not already inserted)
 		if !injectedLine {
-			buffOut.WriteLineFeed()
+			buffOut.WriteString(fmt.Sprintf("\n\n# Generated @ %s\n", time.Now().Format(time.DateTime)))
 			injectedLine = true
 		}
 

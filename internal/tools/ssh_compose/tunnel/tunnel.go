@@ -49,12 +49,16 @@ func makeHostRef() string {
 	return fmt.Sprintf("%s@%s", injectionRef[env.TunnelUser], injectionRef[env.TunnelHost])
 }
 
-func makeSSHCommand(host hosts.Host, reqEnvVar, hostString string) []string {
-	return []string{
-		"ssh", "-tNn", "-p", injectionRef[env.TunnelPort], "-o", "ServerAliveInterval=60",
-		"-L", makeTunnelDef(host, reqEnvVar),
+func makeSSHCommand(host hosts.Host, reqEnvVar, hostString string) string {
+	return fmt.Sprintf(
+		"ssh -tNn -p %s -o ServerAliveInterval=60 -L %s:%d:%s:%d %s",
+		injectionRef[env.TunnelPort],
+		reqEnvVar,
+		host.Port,
+		reqEnvVar,
+		host.Port,
 		hostString,
-	}
+	)
 }
 
 type ServiceBlock struct {

@@ -72,7 +72,12 @@ func BuildTunnelConfigs(config Config) BuiltConfigs {
 	// Now that we've built the SSH containers, we can add service entries to link
 	// the dependents to the new service entries.
 	for dependent, dependencies := range serviceDependents {
-		services[dependent] = compose.Service{DependsOn: dependencies}
+		structs := make(map[string]compose.Dependency, len(dependencies))
+		for _, name := range dependencies {
+			structs[name] = compose.Dependency{Condition: compose.DependencyConditionHealthy}
+		}
+
+		services[dependent] = compose.Service{DependsOn: structs}
 	}
 
 	return BuiltConfigs{

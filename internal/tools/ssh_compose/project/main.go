@@ -9,7 +9,7 @@ import (
 
 	"gopkg.in/yaml.v3"
 
-	"vpdb-dev-tool/internal/lib/xio"
+	"vpdb-dev-tool/internal/lib/xos"
 	"vpdb-dev-tool/internal/tools/ssh_compose/compose"
 	"vpdb-dev-tool/internal/tools/ssh_compose/tunnel"
 )
@@ -28,7 +28,7 @@ func WriteOutConfigs(configs tunnel.BuiltConfigs, tunnelConfigFile string) {
 
 func writeOutComposeFile(config *compose.Config) {
 	file := requireFile(OutputComposeFileName, os.O_WRONLY|os.O_CREATE|os.O_TRUNC)
-	defer file.Close()
+	defer xos.MustClose(file)
 
 	enc := yaml.NewEncoder(file)
 	enc.SetIndent(2)
@@ -41,9 +41,9 @@ func writeOutComposeFile(config *compose.Config) {
 
 func writeOutEnvFile(hosts map[string]string) {
 	file := requireFile(EnvFileName, os.O_RDWR|os.O_CREATE)
-	defer file.Close()
+	defer xos.MustClose(file)
 
-	patchEnvFile(xio.ReqRWFile{File: file}, hosts)
+	patchEnvFile(file, hosts)
 }
 
 func writeOutGitIgnoreFile(tunnelConfigFile string) {
@@ -62,7 +62,7 @@ func writeOutGitIgnoreFile(tunnelConfigFile string) {
 
 func patchGitIgnoreFile(tunnelConfigFile string) {
 	file := requireFile(GitIgnoreFileName, os.O_RDWR|os.O_APPEND)
-	defer file.Close()
+	defer xos.MustClose(file)
 
 	entries := make(map[string]bool, 32)
 	scanner := bufio.NewScanner(file)
@@ -98,7 +98,7 @@ func patchGitIgnoreFile(tunnelConfigFile string) {
 
 func createGitIgnoreFile(tunnelConfigFile string) {
 	file := requireFile(GitIgnoreFileName, os.O_WRONLY|os.O_CREATE|os.O_EXCL)
-	defer file.Close()
+	defer xos.MustClose(file)
 
 	buff := bufio.NewWriter(file)
 

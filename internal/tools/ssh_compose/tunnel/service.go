@@ -1,6 +1,7 @@
 package tunnel
 
 import (
+	"fmt"
 	"strings"
 
 	"vpdb-dev-tool/internal/tools/ssh_compose/compose"
@@ -13,14 +14,15 @@ func buildService(name, image, hostString string, host hosts.Host, volumes []com
 	reqEnvName := envToRequiredInjectVar(envName)
 
 	return compose.Service{
-		Image:      image,
-		Entrypoint: makeSSHCommand(host, reqEnvName, hostString),
-		Volumes:    volumes,
+		Image:       image,
+		Entrypoint:  makeSSHCommand(host, reqEnvName, hostString),
+		Volumes:     volumes,
+		HealthCheck: &compose.HealthCheck{Test: fmt.Sprintf("nc -zv %s %d", reqEnvName, host.Port)},
 		Environment: map[string]string{
 			env.SSHSockDef: injectionRef[env.SSHSockTgt],
 		},
 		Networks: map[string]compose.Network{
-		        "default": {},
+			"default": {},
 			"internal": {
 				Aliases: []string{reqEnvName},
 			},
