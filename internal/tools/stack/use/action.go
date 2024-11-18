@@ -5,13 +5,13 @@ import (
 	"fmt"
 	"os"
 	"path"
+	"vpdb-dev-tool/internal/lib/must"
 
 	"github.com/sirupsen/logrus"
 	"gopkg.in/yaml.v3"
 
 	"vpdb-dev-tool/internal/lib/env"
 	"vpdb-dev-tool/internal/lib/gh"
-	"vpdb-dev-tool/internal/lib/util"
 	"vpdb-dev-tool/internal/lib/xos"
 )
 
@@ -78,21 +78,21 @@ func run(opts options) {
 	xos.MustClose(envFile)
 	xos.MustClose(tmpFile)
 
-	util.Must(os.Rename(tmpEnvFileName, env.DotEnvFileName))
+	must.NotError(os.Rename(tmpEnvFileName, env.DotEnvFileName))
 }
 
 func loadTaggerFile(target string) (versions map[string]string) {
 	ghCreds := gh.RequireCredentials()
-	taggerFileBytes := util.MustReturn(gh.GetPrivateFileContents("tagger", "versions.yml", target, ghCreds.Token))
+	taggerFileBytes := must.Return1(gh.GetPrivateFileContents("tagger", "versions.yml", target, ghCreds.Token))
 
 	decoder := yaml.NewDecoder(bytes.NewReader(taggerFileBytes))
-	util.Must(decoder.Decode(&versions))
+	must.NotError(decoder.Decode(&versions))
 
 	return
 }
 
 func makeDefaultBackupPath() string {
-	nameBase := path.Join(util.MustReturn(os.UserHomeDir()), path.Base(util.MustReturn(os.Getwd()))+".env.backup.%d")
+	nameBase := path.Join(must.Return1(os.UserHomeDir()), path.Base(must.Return1(os.Getwd()))+".env.backup.%d")
 	distinct := 1
 
 	for {

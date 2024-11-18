@@ -5,11 +5,11 @@ import (
 	"bytes"
 	"os"
 	"path"
+	"vpdb-dev-tool/internal/lib/must"
 
 	"github.com/sirupsen/logrus"
 
 	"vpdb-dev-tool/internal/lib/scanning"
-	"vpdb-dev-tool/internal/lib/util"
 	"vpdb-dev-tool/internal/lib/xbytes"
 	"vpdb-dev-tool/internal/lib/xos"
 )
@@ -53,11 +53,11 @@ func tryGradlePropsForCreds(creds *Credentials) bool {
 	propsFile := path.Join(home, ".gradle/gradle.properties")
 
 	// no gradle props file :(
-	if !util.MustReturn(xos.PathExists(propsFile)) {
+	if !must.Return1(xos.PathExists(propsFile)) {
 		return false
 	}
 
-	file := xos.MustOpen(propsFile)
+	file := xos.MustOpenSimple(propsFile)
 	defer file.Close()
 
 	scanner := bufio.NewScanner(file)
@@ -93,7 +93,7 @@ func tryGradlePropsForCreds(creds *Credentials) bool {
 		}
 	}
 
-	util.Must(scanner.Err())
+	must.NotError(scanner.Err())
 
 	return false
 }
@@ -107,7 +107,8 @@ func tryGradlePropsForCreds(creds *Credentials) bool {
 //	^ *[=:] *(.*)$
 //
 // TODO: this does not handle the case where someone has a multiline property
-//       definition.
+//
+//	definition.
 func eatPropsValue(line []byte) (string, bool) {
 	// If the line ended at the end of the variable name, there is no value.
 	if len(line) == 0 {

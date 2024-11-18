@@ -4,15 +4,14 @@ import (
 	"errors"
 	"io"
 	"os"
+	"vpdb-dev-tool/internal/lib/must"
 
 	"github.com/sirupsen/logrus"
-
-	"vpdb-dev-tool/internal/lib/util"
 )
 
 // MustPathExists wraps PathExists and panics on error.
 func MustPathExists(path string) bool {
-	return util.MustReturn(PathExists(path))
+	return must.Return1(PathExists(path))
 }
 
 // PathExists tests whether a given path exists on the system.
@@ -28,8 +27,12 @@ func PathExists(path string) (bool, error) {
 	return true, nil
 }
 
-// MustOpen attempts to open a target file and panics on failure.
-func MustOpen(path string) *os.File {
+func MustOpen(path string, mode int, perms os.FileMode) *os.File {
+	return must.Return1(os.OpenFile(path, mode, perms))
+}
+
+// MustOpenSimple attempts to open a target file and panics on failure.
+func MustOpenSimple(path string) *os.File {
 	if file, err := os.Open(path); err != nil {
 		logrus.Fatalf("failed to open file %s: %s", path, err)
 		panic(err) // unreachable
@@ -40,13 +43,21 @@ func MustOpen(path string) *os.File {
 }
 
 // MustClose attempts to close the given file and logs an error on failure.
-func MustClose(file *os.File) {
+func MustClose(file io.Closer) {
 	if err := file.Close(); err != nil {
 		if !errors.Is(err, os.ErrClosed) {
-			logrus.Errorf("failed to close handle on file %s: %s", file.Name(), err)
+			if v, ok := file.(*os.File); ok {
+				logrus.Errorf("failed to close handle on file %s: %s", v.Name(), err)
+			} else {
+				logrus.Errorf("failed to close stream: %s", err.Error())
+			}
 		}
 	} else {
-		logrus.Tracef("closed handle on file %s", file.Name())
+		if v, ok := file.(*os.File); ok {
+			logrus.Tracef("closed handle on file %s", v.Name())
+		} else {
+			logrus.Trace("closed handle on stream")
+		}
 	}
 }
 
@@ -63,7 +74,7 @@ func MustCreateFile(name string) *os.File {
 
 // MustCopyFile wraps CopyFile and panics on error.
 func MustCopyFile(from, to string) {
-	util.Must(CopyFile(from, to))
+	must.NotError(CopyFile(from, to))
 }
 
 // CopyFile copies a file from one path to another.
@@ -88,4 +99,8 @@ func CopyFile(from, to string) error {
 	_, err = io.Copy(t, f)
 
 	return err
+}
+
+func MustDelete(path string) {
+	must.NotError(os.Remove(path))
 }

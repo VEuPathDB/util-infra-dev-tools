@@ -73,7 +73,7 @@ func scanConfig(file string, config composeFile, index map[string]string) {
 }
 
 func parseConfig(path string) composeFile {
-	file := xos.MustOpen(path)
+	file := xos.MustOpenSimple(path)
 	defer xos.MustClose(file)
 	return parseModel(file)
 }

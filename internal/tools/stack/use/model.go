@@ -2,11 +2,10 @@ package use
 
 import (
 	"os"
+	"vpdb-dev-tool/internal/lib/must"
 
 	"github.com/sirupsen/logrus"
 	"gopkg.in/yaml.v3"
-
-	"vpdb-dev-tool/internal/lib/util"
 )
 
 type composeFile struct {
@@ -19,7 +18,7 @@ type composeService struct {
 
 func parseModel(file *os.File) (config composeFile) {
 	parser := yaml.NewDecoder(file)
-	util.Must(parser.Decode(&config))
+	must.NotError(parser.Decode(&config))
 	logrus.Tracef("parsed docker compose file %s", file.Name())
 	return
 }

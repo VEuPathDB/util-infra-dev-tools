@@ -2,9 +2,9 @@ package project
 
 import (
 	"os"
+	"vpdb-dev-tool/internal/lib/must"
 
 	E "vpdb-dev-tool/internal/lib/env"
-	"vpdb-dev-tool/internal/lib/util"
 	"vpdb-dev-tool/internal/lib/xos"
 	"vpdb-dev-tool/internal/tools/ssh_compose/env"
 )
@@ -23,8 +23,9 @@ func patchEnvFile(file *os.File, hosts map[string]string) {
 	}
 
 	editor.ApplyEdits(file, tmpFile)
-
 	xos.MustClose(tmpFile)
+	xos.MustDelete(file.Name())
 
-	util.Must(os.Rename(tmpFile.Name(), file.Name()))
+	must.NotError(xos.CopyFile(tmpFile.Name(), file.Name()))
+	xos.MustDelete(tmpFile.Name())
 }

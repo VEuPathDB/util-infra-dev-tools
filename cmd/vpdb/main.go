@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"vpdb-dev-tool/internal/tools/merge_compose"
 
 	cli "github.com/Foxcapades/Argonaut"
 	"github.com/Foxcapades/Argonaut/pkg/argo"
@@ -45,6 +46,7 @@ func main() {
 	ssh_compose.Init(tree)
 	vdi.Init(tree)
 	stack.Init(tree)
+	merge_compose.Init(tree)
 
 	_, err := tree.Parse(os.Args)
 
