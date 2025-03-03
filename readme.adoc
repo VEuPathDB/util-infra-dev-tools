@@ -74,6 +74,10 @@ Flags
       Specifies an alternative docker image to use for the SSH tunnel containers.
   --gen-example
       Generates an example host-list yaml file.
+  -s <arg> | --ssh-home=<arg>
+      Specifies an alternative path for SSH config and key files.
+
+      Defaults to "$HOME/.ssh".
   -h | --help
       Prints this help text.
 
