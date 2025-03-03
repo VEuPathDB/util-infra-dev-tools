@@ -22,33 +22,38 @@ const usage = "Generates a docker-compose configuration file and required " +
 	"intended use of the tunnels established by the defined containers is not " +
 	"in violation of any security policy or policies."
 
-const imageFlagDocs = "Specifies an alternative docker image to use for the SSH tunnel containers."
-
-const genFlagDocs = "Generates an example host-list yaml file."
+const (
+	imageFlagDocs   = "Specifies an alternative docker image to use for the SSH tunnel containers."
+	genFlagDocs     = "Generates an example host-list yaml file."
+	sshHomeFlagDocs = "Specifies an alternative path for SSH config and key files.\n\n" +
+		"Defaults to \"$HOME/.ssh\"."
+)
 
 const hostListDocs = "YAML file providing mapping of hosts to dependent docker " +
 	"compose service names.  An example may be generated via the --gen-example " +
 	"flag."
 
 func Init(tree argo.CommandTreeBuilder) {
-	var hostsFile string
-	var image string
+	var options cliOptions
 
 	tree.WithLeaf(cli.Leaf("ssh-compose").
 		WithDescription(usage).
 		WithFlag(cli.ComboFlag('i', "image").
 			WithDescription(imageFlagDocs).
-			WithBindingAndDefault(&image, dockerImage, true)).
+			WithBindingAndDefault(&options.image, dockerImage, true)).
 		WithFlag(cli.LongFlag("gen-example").
 			WithDescription(genFlagDocs).
 			WithCallback(func(argo.Flag) {
 				hosts.MakeHostsList()
 				os.Exit(0)
 			})).
+		WithFlag(cli.ComboFlag('s', "ssh-home").
+			WithDescription(sshHomeFlagDocs).
+			WithBinding(&options.sshHome, true)).
 		WithArgument(cli.Argument().
 			WithName("hosts-list").
 			WithDescription(hostListDocs).
-			WithBinding(&hostsFile).
+			WithBinding(&options.hostsFile).
 			Require()).
-		WithCallback(func(argo.CommandLeaf) { main(hostsFile, image) }))
+		WithCallback(func(argo.CommandLeaf) { main(options) }))
 }

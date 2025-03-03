@@ -24,7 +24,7 @@ clean:
 	@rm -rf bin
 
 .PHONY: release
-release: clean $(foreach os,$(OS_TARGETS),bin/vpdb-$(os).zip) $(foreach os,$(OS_TARGETS),bin/merge-compose-$(os).zip)
+release: clean $(foreach os,$(OS_TARGETS),bin/vpdb-$(os).zip) #$(foreach os,$(OS_TARGETS),bin/merge-compose-$(os).zip)
 
 .PHONY: publish-local
 publish-local: bin/$(CURRENT_OS)/vpdb

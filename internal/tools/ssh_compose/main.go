@@ -19,19 +19,19 @@ const followupSteps = "\n" +
 	" value for the SSH_AUTH_SOCK environment variable used by the generated" +
 	" compose file."
 
-func main(hostsFile, image string) {
-	hostList := hosts.ReadHostsFile(hostsFile)
+func main(options cliOptions) {
+	hostList := hosts.ReadHostsFile(options.hostsFile)
 	if len(hostList) == 0 {
 		log.Fatalln("input contained no valid host entries")
 	}
 
 	tunnelConfigs := tunnel.BuildTunnelConfigs(tunnel.Config{
-		ComposeVersion: "3.5",
-		DockerImage:    image,
-		Entries:        hostList,
+		DockerImage: options.image,
+		Entries:     hostList,
+		SSHHome:     options.sshHome,
 	})
 
-	project.WriteOutConfigs(tunnelConfigs, hostsFile)
+	project.WriteOutConfigs(tunnelConfigs, options.hostsFile)
 
 	fmt.Println(followupSteps)
 }

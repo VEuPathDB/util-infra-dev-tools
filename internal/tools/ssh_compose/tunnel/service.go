@@ -27,5 +27,8 @@ func buildService(name, image, hostString string, host hosts.Host, volumes []com
 				Aliases: []string{reqEnvName},
 			},
 		},
+		Labels: map[string]string{
+			"traefik.enable": "false",
+		},
 	}
 }

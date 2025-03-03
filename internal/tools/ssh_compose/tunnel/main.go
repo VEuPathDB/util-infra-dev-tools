@@ -8,9 +8,9 @@ import (
 )
 
 type Config struct {
-	ComposeVersion string
-	DockerImage    string
-	Entries        map[hosts.Host][]string
+	DockerImage string
+	Entries     map[hosts.Host][]string
+	SSHHome     string
 }
 
 type BuiltConfigs struct {
@@ -30,7 +30,7 @@ func BuildTunnelConfigs(config Config) BuiltConfigs {
 
 	// Create the bind volume list that will be used in all the SSH service
 	// containers.
-	volumes := makeVolumes()
+	volumes := makeVolumes(config.SSHHome)
 
 	// Make a new map to hold all the docker-compose service entries.
 	services := make(map[string]compose.Service, countServiceEntries(config.Entries))
@@ -82,7 +82,6 @@ func BuildTunnelConfigs(config Config) BuiltConfigs {
 
 	return BuiltConfigs{
 		Compose: compose.Config{
-			Version:  config.ComposeVersion,
 			Services: services,
 		},
 		Hosts: hosts,
