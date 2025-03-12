@@ -1,5 +1,7 @@
 package compose
 
+import "time"
+
 type Config struct {
 	Services map[string]Service `yaml:"services,omitempty"`
 	Networks map[string]Network `yaml:"networks,omitempty"`
@@ -14,7 +16,7 @@ type Service struct {
 	Image       string                `yaml:"image,omitempty"`
 	DependsOn   map[string]Dependency `yaml:"depends_on,omitempty"`
 	Entrypoint  string                `yaml:"entrypoint,omitempty"`
-	HealthCheck *HealthCheck          `yaml:"healthcheck,omitempty"`
+	HealthCheck HealthCheck           `yaml:"healthcheck,omitempty"`
 	Environment map[string]string     `yaml:"environment,omitempty"`
 	Volumes     []Volume              `yaml:"volumes,omitempty"`
 	Networks    map[string]Network    `yaml:"networks,omitempty"`
@@ -34,5 +36,10 @@ type Dependency struct {
 }
 
 type HealthCheck struct {
-	Test string `yaml:"test"`
+	Test          string        `yaml:"test"`
+	Interval      time.Duration `yaml:"interval"`
+	Timeout       time.Duration `yaml:"timeout"`
+	Retries       uint8
+	StartPeriod   time.Duration `yaml:"start_period"`
+	StartInterval time.Duration `yaml:"start_interval"`
 }
