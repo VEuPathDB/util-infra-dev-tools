@@ -11,9 +11,9 @@ function __vpdb_get_help() {
           mode = 2;
         } else if (mode == 1 && $0 ~ /^  -/) {
           if ($3 == "|") {
-            print $1, gensub(/=.+/, "", "g", $4);
+            print $1, gensub(/=.*/, "", "g", $4);
           } else if ($3 ~ /^--/) {
-            print $1, gensub(/=.+/, "", "g", $3);
+            print $1, gensub(/=.*/, "", "g", $3);
           } else {
             print $1;
           }
@@ -38,17 +38,17 @@ function __vpdb_completion_ssh_compose() {
 
   if [[ "${COMP_WORDS[$((COMP_CWORD-1))]}" =~ ^-(i|-image)$ ]]; then
     if [[ -n "${CURRENT_WORD}" ]]; then
-      COMPREPLY=($(docker search --limit 5 "${CURRENT_WORD}" --format '{{.Name}} {{.StarCount}}' | sort -rk2 | cut -f1 -d' ' | tr '\n' ' '))
+      COMPREPLY=($(docker search --limit 10 "${CURRENT_WORD}" --format '{{.Name}} {{.StarCount}}' | sort -rk2 | cut -f1 -d' ' | tr '\n' ' '))
     fi
     return
   fi
 
   if [[ "${CURRENT_WORD}" == -* ]]; then
-    if ! grep -q '\-i\|--image' <<< "${COMP_LINE}"; then
+    if ! grep -q ' -i\b\| --image\b' <<< "${COMP_LINE}"; then
       COMPREPLY+=(-i --image)
     fi
 
-    if ! grep -q '\-s\|--ssh-home' <<< "${COMP_LINE}"; then
+    if ! grep -q ' -s\b\| --ssh-home\b' <<< "${COMP_LINE}"; then
       COMPREPLY+=(-s --ssh-home)
     fi
 
@@ -56,21 +56,28 @@ function __vpdb_completion_ssh_compose() {
       COMPREPLY+=(-V)
     fi
 
+    if [ "${#COMPREPLY[@]}" -gt 0 ]; then
+      COMPREPLY=($(compgen -W "${COMPREPLY[*]}" -- "${CURRENT_WORD}"))
+    fi
+
     return
   fi
 
   if ! grep -q '.*\.ya\?ml' <<< "${COMP_LINE}"; then
-    COMPREPLY=($(compgen -C "find . -maxdepth 1 '(' -name '*.yml' -o -name '*.yaml' ')' -printf '%P '" -- "${CURRENT_WORD}"))
-    return
+    COMPREPLY=($(compgen -W "$(find . -maxdepth 1 '(' -name '*.yml' -o -name '*.yaml' ')' -printf '%P ')" -- "${CURRENT_WORD}"))
+
+    if [ "${#COMPREPLY[@]}" -gt 0 ]; then
+      return
+    fi
   fi
 
   COMPREPLY=(-h --help -v --version)
 
-  if ! grep -q '\-i\|--image' <<< "${COMP_LINE}"; then
+  if ! grep -q ' -i\b\| --image\b' <<< "${COMP_LINE}"; then
     COMPREPLY+=(-i --image)
   fi
 
-  if ! grep -q '\-s\|--ssh-home' <<< "${COMP_LINE}"; then
+  if ! grep -q ' -s\b\| --ssh-home\b' <<< "${COMP_LINE}"; then
     COMPREPLY+=(-s --ssh-home)
   fi
 
@@ -83,16 +90,21 @@ function __vpdb_completion_vdi() {
   local -a COMMANDS=(vdi)
 
   if grep -q "gen-tagger" <<< "${REMAINING_LINE}"; then
-    if ! grep -q "\-w\|--write-version"; then
-      return
-    fi
-
     COMMANDS+=(gen-tagger)
   fi
 
   COMPREPLY=($(__vpdb_get_help ${COMMANDS[@]}))
+
   if [ "${VERBOSE_LEVEL}" -gt 2 ]; then
-    COMPREPLY=($(sed 's/-V\+//g' <<< "${COMPREPLY[@]}"))
+    COMPREPLY=($(sed 's /-V\+//g' <<< "${COMPREPLY[@]}"))
+  fi
+
+  if grep -q " -w\b\| --write-versions\b" <<< "${REMAINING_LINE}"; then
+    COMPREPLY=($(sed 's/ -w\| --write-versions//g' <<< "${COMPREPLY[@]}"))
+  fi
+
+  if [ "${#COMPREPLY[@]}" -gt 0 ] && [ -n "${CURRENT_WORD}" ]; then
+    COMPREPLY=($(compgen -W "${COMPREPLY[*]}" -- "${CURRENT_WORD}"))
   fi
 }
 
@@ -112,7 +124,7 @@ function __vpdb_completion() {
   fi
 
   # There is no valid operation after a help or version flag.
-  if grep -q '\-h\|--help\|-v\|--version' <<< "${COMP_LINE}"; then
+  if grep -q ' -h\b\| --help\b\| -v\b\| --version\b' <<< "${COMP_LINE}"; then
     return
   fi
 
@@ -128,14 +140,14 @@ function __vpdb_completion() {
   declare -r CURRENT_WORD="${COMP_WORDS[${COMP_CWORD}]}"
 
   for COMMAND in "${TOP_LEVEL_COMMANDS[@]}"; do
-    if grep -q "${COMMAND}" <<< "${COMP_LINE}"; then
+    if grep -q " ${COMMAND}\b" <<< "${COMP_LINE}"; then
       local -r REMAINING_LINE="$(sed "s/vpdb\|${COMMAND}\|-V\+//g" <<< "${COMP_LINE}")"
       __vpdb_completion_$(sed 's/-/_/g' <<< "${COMMAND}")
       return
     fi
   done
 
-  COMPREPLY=($(compgen -W "$(__vpdb_get_help)"))
+  COMPREPLY=($(compgen -W "$(__vpdb_get_help)" -- "${CURRENT_WORD}"))
 
   if [ ${VERBOSE_LEVEL} -gt 2 ]; then
     COMPREPLY=($(sed 's/-V\+//g' <<< "${COMPREPLY[@]}"))
