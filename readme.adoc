@@ -15,7 +15,7 @@ image:https://img.shields.io/github/go-mod/go-version/veupathdb/util-infra-dev-t
 == Installation
 
 ----
-curl -Ls https://raw.githubusercontent.com/VEuPathDB/util-infra-dev-tools/main/scripts/install.sh | sh
+curl -Ls https://raw.githubusercontent.com/VEuPathDB/util-infra-dev-tools/main/scripts/install.sh | bash
 ----
 
 
