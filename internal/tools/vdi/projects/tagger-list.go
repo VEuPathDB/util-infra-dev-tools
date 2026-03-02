@@ -6,24 +6,14 @@ var (
 		{Name: "vdi-plugin-biom", Images: []string{"vdi-plugin-biom"}},
 		{Name: "vdi-plugin-example", Images: []string{"vdi-plugin-example"}},
 		{Name: "vdi-plugin-genelist", Images: []string{"vdi-plugin-genelist"}},
-		{Name: "vdi-plugin-isasimple", Images: []string{"vdi-plugin-isasimple"}},
+		{Name: "vdi-plugin-wrangler", Images: []string{"vdi-plugin-wrangler"}},
 		{Name: "vdi-plugin-rnaseq", Images: []string{"vdi-plugin-rnaseq"}},
 	}
-	baseImages = [...]Project{
-		{Name: "docker-gus-apidb-base", Images: []string{"gus-apidb-base"}},
-		{Name: "vdi-plugin-handler-server", Images: []string{"vdi-plugin-handler-server"}},
-		{Name: "vdi-docker-plugin-base", Images: []string{"vdi-plugin-base"}},
-	}
 	rootService = [...]Project{
-		{Name: "vdi-service", Images: []string{"vdi-service"}},
+		{Name: "vdi-service", Images: []string{"vdi-service", "vdi-internal-db"}},
 	}
 	support = [...]Project{
-		{Name: "vdi-internal-db", Images: []string{"vdi-internal-db"}},
 		{Name: "docker-apache-kafka", Images: []string{"apache-kafka"}},
-	}
-	libraries = [...]Project{
-		{Name: "vdi-component-common", Images: []string{}},
-		{Name: "vdi-component-json", Images: []string{}},
 	}
 )
 
