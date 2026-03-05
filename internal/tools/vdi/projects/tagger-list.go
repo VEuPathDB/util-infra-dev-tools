@@ -4,7 +4,7 @@ var (
 	plugins = [...]Project{
 		{Name: "vdi-plugin-bigwig", Images: []string{"vdi-plugin-bigwig"}},
 		{Name: "vdi-plugin-biom", Images: []string{"vdi-plugin-biom"}},
-		{Name: "vdi-plugin-example", Images: []string{"vdi-plugin-example"}},
+		{Name: "vdi-plugin-noop", Images: []string{"vdi-plugin-noop"}},
 		{Name: "vdi-plugin-genelist", Images: []string{"vdi-plugin-genelist"}},
 		{Name: "vdi-plugin-wrangler", Images: []string{"vdi-plugin-wrangler"}},
 		{Name: "vdi-plugin-rnaseq", Images: []string{"vdi-plugin-rnaseq"}},
